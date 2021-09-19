@@ -7,9 +7,13 @@ use Webmozart\Assert\Assert;
 
 class Term implements Criteria
 {
-    public function __construct(private string $field, private mixed $value)
+    private mixed $value;
+
+    public function __construct(private string $field, mixed $value)
     {
         Assert::stringNotEmpty(trim($field));
+
+        $this->value = is_array($value) ? head($value) : $value;
     }
 
     public function toDSL(): array

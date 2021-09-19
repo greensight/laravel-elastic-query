@@ -2,28 +2,14 @@
 
 namespace Greensight\LaravelElasticQuery\Tests\Functional\Raw\Aggregating;
 
-use Greensight\LaravelElasticQuery\Raw\Aggregating\AggregationsQuery;
-use Greensight\LaravelElasticQuery\Raw\Aggregating\MinMax;
 use Greensight\LaravelElasticQuery\Raw\Contracts\AggregationsBuilder;
-use Greensight\LaravelElasticQuery\Tests\Functional\ElasticTestCase;
-use Greensight\LaravelElasticQuery\Tests\Models\ProductsIndex;
-use Greensight\LaravelElasticQuery\Tests\Seeds\ProductIndexSeeder;
+use Greensight\LaravelElasticQuery\Tests\Functional\AggregationTestCase;
 
-class AggregationQueryTest extends ElasticTestCase
+class AggregationQueryTest extends AggregationTestCase
 {
-    private AggregationsQuery $testing;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        ProductIndexSeeder::run();
-        $this->testing = $this->makeAggregationsQuery(ProductsIndex::class);
-    }
-
     public function testGet(): void
     {
-        $this->testing
+        $this->query
             ->where('package', 'bottle')
             ->terms('codes', 'code')
             ->nested(
@@ -31,27 +17,17 @@ class AggregationQueryTest extends ElasticTestCase
                 fn (AggregationsBuilder $builder) => $builder->where('seller_id', 10)->minmax('price', 'price')
             );
 
-        $results = $this->testing->get();
-
-        $this->assertEqualsCanonicalizing(
-            ['voda-san-pellegrino-mineralnaya-gazirovannaya', 'water'],
-            $results->get('codes')->pluck('key')->all()
-        );
-        $this->assertEquals(new MinMax(168.0, 611.0), $results->get('price'));
+        $this->assertBucketKeys('codes', ['voda-san-pellegrino-mineralnaya-gazirovannaya', 'water']);
+        $this->assertMinMax('price', 168.0, 611.0);
     }
 
     public function testComposite(): void
     {
-        $this->testing->composite(function (AggregationsBuilder $builder) {
+        $this->query->composite(function (AggregationsBuilder $builder) {
             $builder->where('package', 'bottle')
                 ->terms('codes', 'code');
         });
 
-        $results = $this->testing->get();
-
-        $this->assertEqualsCanonicalizing(
-            ['voda-san-pellegrino-mineralnaya-gazirovannaya', 'water'],
-            $results->get('codes')->pluck('key')->all()
-        );
+        $this->assertBucketKeys('codes', ['voda-san-pellegrino-mineralnaya-gazirovannaya', 'water']);
     }
 }

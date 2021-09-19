@@ -3,11 +3,13 @@
 namespace Greensight\LaravelElasticQuery;
 
 use Elasticsearch\ClientBuilder;
+use Greensight\LaravelElasticQuery\Declarative\QueryBuilderRequest;
 use Greensight\LaravelElasticQuery\Raw\ElasticClient;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
-class ElasticQueryServiceProvider extends ServiceProvider
+class ElasticQueryServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * Bootstrap the application services.
@@ -24,7 +26,7 @@ class ElasticQueryServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('ensi-elastic-query.php'),
+                __DIR__.'/../config/config.php' => config_path('laravel-elastic-query.php'),
             ], 'config');
 
             // Publishing the views.
@@ -53,15 +55,28 @@ class ElasticQueryServiceProvider extends ServiceProvider
     public function register()
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'ensi-elastic-query');
+        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-elastic-query');
 
         $this->app->singleton(ElasticClient::class, fn (Application $app) => $this->createClient($app));
+
+        $this->app->bind(
+            QueryBuilderRequest::class,
+            fn(Application $app) => QueryBuilderRequest::fromRequest($app['request'])
+        );
+    }
+
+    public function provides(): array
+    {
+        return [
+            ElasticClient::class,
+            QueryBuilderRequest::class,
+        ];
     }
 
     private function createClient(Application $app): ElasticClient
     {
         $naturalClient = (new ClientBuilder())
-            ->setHosts($app['config']['ensi-elastic-query.connection.hosts'])
+            ->setHosts($app['config']['laravel-elastic-query.connection.hosts'])
             ->build();
 
         return new ElasticClient($naturalClient);

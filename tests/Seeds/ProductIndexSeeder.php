@@ -22,6 +22,14 @@ class ProductIndexSeeder extends IndexSeeder
             'rating' => ['type' => 'integer'],
             'package' => ['type' => 'keyword'],
 
+            'cashback' => [
+                'type' => 'object',
+                'properties' => [
+                    'active' => ['type' => 'boolean'],
+                    'value' => ['type' => 'integer'],
+                ],
+            ],
+
             'offers' => [
                 'type' => 'nested',
                 'properties' => [

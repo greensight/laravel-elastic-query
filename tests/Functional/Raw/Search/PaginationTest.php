@@ -3,20 +3,21 @@
 namespace Greensight\LaravelElasticQuery\Tests\Functional\Raw\Search;
 
 use Greensight\LaravelElasticQuery\Raw\Search\Cursor;
+use Greensight\LaravelElasticQuery\Tests\Functional\SearchTestCase;
 
 class PaginationTest extends SearchTestCase
 {
     public function testCursorPaginate(): void
     {
-        $this->testing->sortBy('package')
+        $this->query->sortBy('package')
             ->sortBy('rating', 'desc');
 
-        $page = $this->testing->cursorPaginate(2);
+        $page = $this->query->cursorPaginate(2);
 
         $this->assertEquals(Cursor::BOF()->encode(), $page->current);
         $this->assertNull($page->previous);
 
-        $pageNext = $this->testing->cursorPaginate(2, $page->next);
+        $pageNext = $this->query->cursorPaginate(2, $page->next);
 
         $this->assertEquals($page->current, $pageNext->previous);
         $this->assertTrue(true);
@@ -24,7 +25,7 @@ class PaginationTest extends SearchTestCase
 
     public function testPage(): void
     {
-        $page = $this->testing->sortBy('product_id')->paginate(2, 1);
+        $page = $this->query->sortBy('product_id')->paginate(2, 1);
 
         $this->assertEquals(self::TOTAL_PRODUCTS, $page->total);
         $this->assertEquals(1, $page->offset);

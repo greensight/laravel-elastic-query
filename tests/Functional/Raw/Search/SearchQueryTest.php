@@ -4,20 +4,21 @@ namespace Greensight\LaravelElasticQuery\Tests\Functional\Raw\Search;
 
 use Greensight\LaravelElasticQuery\Raw\Contracts\BoolQuery;
 use Greensight\LaravelElasticQuery\Raw\Contracts\SortableQuery;
+use Greensight\LaravelElasticQuery\Tests\Functional\SearchTestCase;
 
 class SearchQueryTest extends SearchTestCase
 {
     //region Get
     public function testGetAll(): void
     {
-        $results = $this->testing->get();
+        $results = $this->query->get();
 
         $this->assertCount(self::TOTAL_PRODUCTS, $results);
     }
 
     public function testGetFiltered(): void
     {
-        $results = $this->testing
+        $results = $this->query
             ->where('active', true)
             ->whereDoesntHave('offers', fn (BoolQuery $query) => $query->where('seller_id', 90))
             ->get();
@@ -27,14 +28,14 @@ class SearchQueryTest extends SearchTestCase
 
     public function testTake(): void
     {
-        $results = $this->testing->take(1)->get();
+        $results = $this->query->take(1)->get();
 
         $this->assertCount(1, $results);
     }
 
     public function testSkip(): void
     {
-        $this->testing->skip(1)->take(1);
+        $this->query->skip(1)->take(1);
 
         $this->assertDocumentIds([150]);
     }
@@ -44,7 +45,7 @@ class SearchQueryTest extends SearchTestCase
     //region Sorting
     public function testSortBy(): void
     {
-        $this->testing->sortBy('product_id')->take(3);
+        $this->query->sortBy('product_id')->take(3);
 
         $this->assertDocumentIds([1, 150, 319]);
     }
@@ -56,7 +57,7 @@ class SearchQueryTest extends SearchTestCase
                 ->where('active', true);
         };
 
-        $this->testing
+        $this->query
             ->whereHas('offers', $filter)
             ->sortByNested('offers', function (SortableQuery $builder) use ($filter) {
                 $filter($builder);
@@ -71,7 +72,7 @@ class SearchQueryTest extends SearchTestCase
 
     protected function assertDocumentOrder(array $ids): void
     {
-        $actual = $this->testing->get()
+        $actual = $this->query->get()
             ->pluck('_id')
             ->all();
 

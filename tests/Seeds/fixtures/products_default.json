@@ -7,6 +7,7 @@
     "rating": 7,
     "package": null,
     "description": "TV station description",
+    "cashback": {"active": true, "value": 20},
     "tags": ["video"],
     "offers": [
       {"seller_id": 10, "active": true, "price": 20000.0},
@@ -22,7 +23,8 @@
     "rating": 10,
     "package": "bottle",
     "description": "TASSAY description water",
-    "tags": ["drinks", "watter"],
+    "cashback": {"active": true, "value": 20},
+    "tags": ["drinks", "water"],
     "offers": [
       {"seller_id": 10, "active": false, "price": 168.0},
       {"seller_id": 15, "active": true, "price": 210.0},
@@ -36,6 +38,7 @@
     "code": "gloves",
     "rating": 0,
     "description": "L gloves descriptions",
+    "cashback": {"active": true, "value": 10},
     "tags": ["clothes", "gloves"],
     "offers": [
       {"seller_id": 10, "active": false, "price": 980.0},
@@ -51,6 +54,7 @@
     "rating": 5,
     "package": null,
     "description": "Nice tv",
+    "cashback": {"active": true, "value": 20},
     "tags": ["video"],
     "offers": [
       {"seller_id": 90, "active": true, "price": 41999.0},
