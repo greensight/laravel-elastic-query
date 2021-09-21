@@ -43,11 +43,19 @@ $hits = $searchQuery
 
 ```php
 $searchQuery->where('field', 'value');
-$searchQuery->where('field', '>', 'value');
+$searchQuery->where('field', '>', 'value'); // supported operators: `=` `!=` `>` `<` `>=` `<=`
 $searchQuery->whereNot('field', 'value'); // equals `where('field', '!=', 'value')`
 ```
 
-List of supported operators: `=, !=, >, <, >=, <=`.
+```php
+$searchQuery->whereIn('field', ['value1', 'value2']);
+$searchQuery->whereNotIn('field', ['value1', 'value2']);
+```
+
+```php
+$searchQuery->whereNull('field');
+$searchQuery->whereNotNull('field');
+```
 
 ```php
 $searchQuery->whereIn('field', ['value1', 'value2']);
@@ -82,7 +90,7 @@ $searchQuery->sortByNested(
 );
 ```
 
-Second attribute is a direction. It supports `asc` and `desc` values. Defaults to `asc`.
+Second attribute is a direction. It supports `asc` and `desc` values. Defaults to `asc`.  
 Third attribute - sorting type. List of supporting types: `min, max, avg, sum, median`. Defaults to `min`.
 
 There are also dedicated sort methods for each sort type.
