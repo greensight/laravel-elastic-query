@@ -1,5 +1,7 @@
 # Laravel Elastic Query
 
+`Deprecated, use https://github.com/ensi-platform/laravel-telemetry instead`
+
 Working with Elasticsearch in an Eloquent-like fashion.
 
 ## Installation
